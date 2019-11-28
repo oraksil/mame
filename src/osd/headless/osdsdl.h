@@ -145,6 +145,9 @@ public:
 
 	virtual sdl_options &options() override { return m_options; }
 
+	// for zaps
+	void (*m_callback)();
+	void set_oraksil_callback(void (*fp)()) { m_callback = fp; }
 protected:
 	virtual void build_slider_list() override;
 	virtual void update_slider_list() override;
@@ -156,6 +159,8 @@ private:
 	void output_oslog(const char *buffer);
 
 	sdl_options &m_options;
+
+
 };
 
 //============================================================
