@@ -112,6 +112,11 @@ void sdl_osd_interface::update(bool skip_redraw)
 	// if we're running, disable some parts of the debugger
 	if ((machine().debug_flags & DEBUG_FLAG_OSD_ENABLED) != 0)
 		debugger_update();
+
+	if (m_callback)
+	{
+		(*m_callback)();
+	}
 }
 
 //============================================================

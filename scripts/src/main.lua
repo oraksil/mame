@@ -31,8 +31,6 @@ end
 		kind "ConsoleApp"
 	end
 
-	configuration { }
-
 	configuration { "android*" }
 		targetprefix "lib"
 		targetname "main"
