@@ -9,6 +9,8 @@
 #include "modules/osdmodule.h"
 #include "modules/font/font_module.h"
 
+#include "headless.h"
+
 //============================================================
 //  Defines
 //============================================================
@@ -146,8 +148,9 @@ public:
 	virtual sdl_options &options() override { return m_options; }
 
 	// for zaps
-	void (*m_callback)();
-	void set_oraksil_callback(void (*fp)()) { m_callback = fp; }
+	void set_update_callback(update_callback_t fp) { m_callback = fp; }
+	void set_buffer_info(image_buffer_info_t *buf_info) { m_buffer_info = buf_info; }
+
 protected:
 	virtual void build_slider_list() override;
 	virtual void update_slider_list() override;
@@ -160,6 +163,12 @@ private:
 
 	sdl_options &m_options;
 
+	// for zaps
+	update_callback_t m_callback;
+	image_buffer_info_t *m_buffer_info;
+
+	void render_pixels_and_callback(bool skip_redraw);
+	void render_pixels_on_buffer(std::shared_ptr<osd_window> window);
 
 };
 
