@@ -23,6 +23,11 @@
 #include "osdsdl.h"
 #include "modules/lib/osdlib.h"
 
+
+// MODULES headers
+#include "rendersw.hxx"
+
+
 //============================================================
 //  CONSTANTS
 //============================================================
@@ -109,14 +114,39 @@ void sdl_osd_interface::update(bool skip_redraw)
 //      profiler_mark(PROFILER_END);
 	}
 
+	render_pixels_and_callback(skip_redraw);
+
 	// if we're running, disable some parts of the debugger
 	if ((machine().debug_flags & DEBUG_FLAG_OSD_ENABLED) != 0)
 		debugger_update();
+}
+
+void sdl_osd_interface::render_pixels_and_callback(bool skip_redraw)
+{
+	auto window = osd_common_t::s_window_list.front();
+	if (window != nullptr)
+		render_pixels_on_buffer(window);
 
 	if (m_callback)
-	{
-		(*m_callback)();
-	}
+		(*m_callback)(skip_redraw);
+}
+
+void sdl_osd_interface::render_pixels_on_buffer(std::shared_ptr<osd_window> window)
+{
+	if (m_buffer_info == nullptr || m_buffer_info->buffer == nullptr)
+		return;
+
+	auto w = std::static_pointer_cast<sdl_window_info>(window);
+	auto &prim = w->target()->get_primitives();
+	prim.acquire_lock();
+	software_renderer<uint32_t, 0, 0, 0, 16, 8, 0>::draw_primitives(
+		prim,
+		m_buffer_info->buffer,
+		m_buffer_info->width,
+		m_buffer_info->height,
+		m_buffer_info->width
+	);
+	prim.release_lock();
 }
 
 //============================================================

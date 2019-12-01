@@ -184,10 +184,7 @@ sdl_options::sdl_options()
 extern "C" DECLSPEC void SDLCALL SDL_SetModuleHandle(void *hInst);
 #endif
 
-int main(int argc, char** argv){
-	return 0;
-}
-extern "C" __attribute__((visibility("default"))) int oraksil(int argc, char** argv, void (*update_callback)())
+int osd_entrypoint(int argc, char** argv, image_buffer_info_t *buf_info, update_callback_t cb)
 {
 	std::vector<std::string> args = osd_get_command_line(argc, argv);
 	int res = 0;
@@ -217,7 +214,8 @@ extern "C" __attribute__((visibility("default"))) int oraksil(int argc, char** a
 		sdl_options options;
 		sdl_osd_interface osd(options);
 		osd.register_options();
-		osd.set_oraksil_callback(update_callback);
+		osd.set_buffer_info(buf_info);
+		osd.set_update_callback(cb);
 		res = emulator_info::start_frontend(options, osd, args);
 	}
 
