@@ -26,7 +26,11 @@ end
 	uuid (os.uuid(_target .."_" .. _subtarget))
 
 	if string.find(_OPTIONS["osd"], "headless") then
-		kind "SharedLib"
+		if (_OPTIONS["SHLIB"] == "0") then
+			kind "StaticLib"
+		else
+			kind "SharedLib"
+		end
 	else
 		kind "ConsoleApp"
 	end
