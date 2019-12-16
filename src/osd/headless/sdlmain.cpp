@@ -47,6 +47,11 @@
 #include "modules/lib/osdlib.h"
 #include "modules/diagnostics/diagnostics_module.h"
 
+// oraksil headers 
+class oraksil_input_module;
+// class oraksil_input_module;
+#include "modules/input/input_oraksil.h"
+
 //============================================================
 //  OPTIONS
 //============================================================
@@ -184,7 +189,7 @@ sdl_options::sdl_options()
 extern "C" DECLSPEC void SDLCALL SDL_SetModuleHandle(void *hInst);
 #endif
 
-int osd_entrypoint(int argc, char** argv, image_buffer_info_t *buf_info, update_callback_t cb)
+int osd_entrypoint(int argc, char** argv, image_buffer_info_t *buf_info, update_callback_t cb, void** retOSD) 
 {
 	std::vector<std::string> args = osd_get_command_line(argc, argv);
 	int res = 0;
@@ -216,6 +221,8 @@ int osd_entrypoint(int argc, char** argv, image_buffer_info_t *buf_info, update_
 		osd.register_options();
 		osd.set_buffer_info(buf_info);
 		osd.set_update_callback(cb);
+
+		*retOSD = (void *)&osd;
 		res = emulator_info::start_frontend(options, osd, args);
 	}
 
@@ -406,7 +413,20 @@ void osd_setup_osd_specific_emu_options(emu_options &opts)
 	opts.add_entries(osd_options::s_option_entries);
 }
 
+// temporary oraksil input event handler
+void handle_input_event(void* osd, uint8_t ascii_key, bool keyDown) {
+	input_module* keyboard_input = ((sdl_osd_interface*)osd)->getKeyboardModule();
+		
+	oraksil_input_module* mod = dynamic_cast<oraksil_input_module*>(keyboard_input);
 
+	OraksilEvent event;
+	event.event_id = keyDown == true ? ORAKSIL_EVENT_KEYDOWN : ORAKSIL_EVENT_KEYUP;
+	event.ascii_key = ascii_key;
+
+	if (mod) {
+		mod->handle_input_event(event);
+	}
+}
 //============================================================
 //  init
 //============================================================

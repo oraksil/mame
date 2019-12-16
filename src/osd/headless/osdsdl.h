@@ -150,6 +150,7 @@ public:
 	// for zaps
 	void set_update_callback(update_callback_t fp) { m_callback = fp; }
 	void set_buffer_info(image_buffer_info_t *buf_info) { m_buffer_info = buf_info; }
+	input_module* getKeyboardModule() { return m_keyboard_input; };
 
 protected:
 	virtual void build_slider_list() override;
