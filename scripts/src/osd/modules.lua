@@ -117,6 +117,7 @@ function osdmodulesbuild()
 		MAME_DIR .. "src/osd/modules/monitor/monitor_dxgi.cpp",
 		MAME_DIR .. "src/osd/modules/monitor/monitor_sdl.cpp",
 		MAME_DIR .. "src/osd/modules/monitor/monitor_mac.cpp",
+		MAME_DIR .. "src/osd/modules/monitor/monitor_headless.cpp",
 	}
 	includedirs {
 		ext_includedir("asio"),
@@ -164,6 +165,7 @@ function osdmodulesbuild()
 		"IMGUI_DISABLE_OBSOLETE_FUNCTIONS",
 	}
 
+	if _OPTIONS["osd"]~="headless" then
 	files {
 		MAME_DIR .. "src/osd/modules/render/drawbgfx.cpp",
 		MAME_DIR .. "src/osd/modules/render/aviwrite.cpp",
@@ -251,6 +253,8 @@ function osdmodulesbuild()
 		MAME_DIR .. "src/osd/modules/render/bgfx/writereader.cpp",
 		MAME_DIR .. "src/osd/modules/render/bgfx/writereader.h",
 	}
+	end
+
 	includedirs {
 		MAME_DIR .. "3rdparty/bgfx/examples/common",
 		MAME_DIR .. "3rdparty/bgfx/include",
