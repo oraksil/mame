@@ -9,6 +9,9 @@
 --
 ---------------------------------------------------------------------------
 
+_OPTIONS["NO_OPENGL"] = "1"
+
+
 dofile("modules.lua")
 
 
@@ -347,7 +350,6 @@ project ("qtdbg_" .. _OPTIONS["osd"])
 	uuid (os.uuid("qtdbg_" .. _OPTIONS["osd"]))
 	kind (LIBTYPE)
 
-	dofile("sdl_cfg.lua")
 	includedirs {
 		MAME_DIR .. "src/emu",
 		MAME_DIR .. "src/devices", -- accessing imagedev from debugger
@@ -370,7 +372,6 @@ project ("osd_" .. _OPTIONS["osd"])
 	uuid (os.uuid("osd_" .. _OPTIONS["osd"]))
 	kind (LIBTYPE)
 
-	dofile("sdl_cfg.lua")
 	osdmodulesbuild()
 
 	includedirs {
@@ -391,7 +392,7 @@ project ("osd_" .. _OPTIONS["osd"])
 		}
 	end
 
-	if _OPTIONS["targetos"]=="macosx" then
+	if _OPTIONS["targetos"]=="macosx" and _OPTIONS["osd"]~="headless" then
 		files {
 			MAME_DIR .. "src/osd/modules/debugger/debugosx.mm",
 			MAME_DIR .. "src/osd/modules/debugger/osx/breakpointsview.mm",
@@ -433,20 +434,11 @@ project ("osd_" .. _OPTIONS["osd"])
 	end
 
 	files {
-		MAME_DIR .. "src/osd/headless/osdsdl.h",
-		MAME_DIR .. "src/osd/headless/sdlprefix.h",
-		MAME_DIR .. "src/osd/headless/sdlmain.cpp",
-		MAME_DIR .. "src/osd/osdepend.h",
+		MAME_DIR .. "src/osd/headless/headless.h",
+		MAME_DIR .. "src/osd/headless/osdheadless.h",
+		MAME_DIR .. "src/osd/headless/osdmain.cpp",
 		MAME_DIR .. "src/osd/headless/video.cpp",
 		MAME_DIR .. "src/osd/headless/window.cpp",
-		MAME_DIR .. "src/osd/headless/window.h",
-		MAME_DIR .. "src/osd/modules/osdwindow.cpp",
-		MAME_DIR .. "src/osd/modules/osdwindow.h",
-		MAME_DIR .. "src/osd/modules/render/drawsdl.cpp",
-	}
-	files {
-		MAME_DIR .. "src/osd/modules/render/draw13.cpp",
-		MAME_DIR .. "src/osd/modules/render/blit13.h",
 	}
 
 
@@ -458,8 +450,6 @@ project ("ocore_" .. _OPTIONS["osd"])
 	removeflags {
 		"SingleOutputDir",
 	}
-
-	dofile("sdl_cfg.lua")
 
 	includedirs {
 		MAME_DIR .. "src/emu",
