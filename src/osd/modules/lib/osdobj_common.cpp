@@ -232,6 +232,7 @@ void osd_common_t::register_options()
 	REGISTER_MODULE(m_mod_man, MONITOR_WIN32);
 	REGISTER_MODULE(m_mod_man, MONITOR_DXGI);
 	REGISTER_MODULE(m_mod_man, MONITOR_MAC);
+	REGISTER_MODULE(m_mod_man, MONITOR_HEADLESS);
 
 #ifdef SDLMAME_MACOSX
 	REGISTER_MODULE(m_mod_man, DEBUG_OSX);
