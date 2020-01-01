@@ -148,14 +148,25 @@ void oraksil_keyboard_module::input_init(running_machine &machine)
 		KEY_TRANS_ENTRY1(5, 5, 5, 5, '5', Number5, 53),
 		KEY_TRANS_ENTRY1(LCONTROL, LCTRL, LCTRL, LCONTROL, VK_LCONTROL, LeftControl, 17),
 		KEY_TRANS_ENTRY1(LALT, LALT, LALT, LMENU, VK_LMENU, LeftMenu, 18),
+
+		// player2
+		KEY_TRANS_ENTRY1(A, A, a, A, 'A', A, 'A'),
+		KEY_TRANS_ENTRY1(S, S, s, S, 'S', S, 'S'),
+		KEY_TRANS_ENTRY1(2, 2, 2, 2, '2', 2, '2'),
+		KEY_TRANS_ENTRY1(6, 6, 6, 6, '6', 6, '6'),
+		KEY_TRANS_ENTRY1(R, R, r, R, 'R', R, 'R'),
+		KEY_TRANS_ENTRY1(F, F, f, F, 'F', F, 'F'),
+		KEY_TRANS_ENTRY1(D, D, d, D, 'D', D, 'D'),
+		KEY_TRANS_ENTRY1(G, G, g, G, 'G', G, 'G'),
+
 		KEY_TRANS_ENTRY0(INVALID, UNKNOWN, UNKNOWN, ESCAPE, 0, None, 0, "INVALID")};
 	// keyboard_trans_table *custom_table = auto_alloc(machine, keyboard_trans_table(std::move(newTable), t_table.ize()));
-	auto key_trans_entries = std::make_unique<key_trans_entry[]>(10);
-	for (int i = 0; i < 10; i++)
+	auto key_trans_entries = std::make_unique<key_trans_entry[]>(18);
+	for (int i = 0; i < 18; i++)
 		key_trans_entries[i] = newTable[i];
 
 	// keyboard_trans_table table(std::move(key_trans_entries), (unsigned int)4);
-	keyboard_trans_table *table = auto_alloc(machine, keyboard_trans_table(std::move(key_trans_entries), 10));
+	keyboard_trans_table *table = auto_alloc(machine, keyboard_trans_table(std::move(key_trans_entries), 18));
 	osd_printf_verbose("Keyboard: Start initialization\n");
 
 	// Oraksil has keyboard only
