@@ -285,7 +285,7 @@ void osd_common_t::register_options()
 	REGISTER_MODULE(m_mod_man, OUTPUT_NETWORK);
 	REGISTER_MODULE(m_mod_man, OUTPUT_WIN32);
 
-
+	REGISTER_MODULE(m_mod_man, KEYBOARDINPUT_HEADLESS);
 	// after initialization we know which modules are supported
 
 	const char *names[20];

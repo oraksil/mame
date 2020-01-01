@@ -1,5 +1,5 @@
-#ifndef INPUT_ORAKSIL_H_
-#define INPUT_ORAKSIL_H_
+#ifndef INPUT_HEADLESS_H_
+#define INPUT_HEADLESS_H_
 
 #include "input_common.h"
 
@@ -43,4 +43,4 @@ public:
 	void input_init(running_machine &machine) override;
 };
 
-#endif  // INPUT_ORAKSIL_H_
+#endif  // INPUT_HEADLESS_H_

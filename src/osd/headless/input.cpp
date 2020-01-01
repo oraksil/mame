@@ -17,6 +17,9 @@ void handle_input_event(void* osd, uint8_t ascii_key, bool keyDown) {
 
     OraksilEvent event;
 
+   	event.event_id = keyDown == true ? ORAKSIL_EVENT_KEYDOWN : ORAKSIL_EVENT_KEYUP;
+	event.ascii_key = ascii_key;
+
     if (mod) {
         mod->handle_input_event(event);
     }
