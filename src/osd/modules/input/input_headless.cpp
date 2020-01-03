@@ -24,12 +24,10 @@
 
 // MAMEOS headers
 #include "input_common.h"
-#include "../lib/osdobj_common.h"
-// #include "input_sdlcommon.h"
-// #include "../../sdl/osdsdl.h"
-// #include "../../sdl/window.h"
+#include "modules/lib/osdobj_common.h"
 
 #include "input_headless.h"
+
 // winnt.h defines this
 #ifdef DELETE
 #undef DELETE
@@ -37,7 +35,6 @@
 
 // FIXME: sdl does not properly report the window for certain OS.
 #define GET_FOCUS_WINDOW(ev) focus_window()
-//#define GET_FOCUS_WINDOW(ev) window_from_id((ev)->windowID)
 
 struct key_lookup_table
 {
@@ -49,20 +46,20 @@ struct key_lookup_table
 //  sdl_keyboard_device
 //============================================================
 
-class oraksil_keyboard_device : public event_based_device<OraksilEvent>
+class headless_keyboard_device : public event_based_device<HeadlessKeyEvent>
 {
 public:
-	oraksil_keyboard_state keyboard;
+	headless_keyboard_state keyboard;
 
-	oraksil_keyboard_device(running_machine &machine, const char *name, const char *id, input_module &module)
+	headless_keyboard_device(running_machine &machine, const char *name, const char *id, input_module &module)
 		: event_based_device(machine, name, id, DEVICE_CLASS_KEYBOARD, module),
 		  keyboard({{0}})
 	{
 	}
 
-	void process_event(OraksilEvent &event) override
+	void process_event(HeadlessKeyEvent &event) override
 	{
-		keyboard.state[event.ascii_key] = event.event_id == ORAKSIL_EVENT_KEYDOWN ? 0x80 : 0x00;
+		keyboard.state[event.ascii_key] = event.event_id == HEADLESS_EVENT_KEYDOWN ? 0x80 : 0x00;
 	}
 
 	void reset() override
@@ -72,16 +69,15 @@ public:
 };
 
 //============================================================
-//  oraksil_input_module
+//  headless_input_module
 //============================================================
 
-// not surely sure about necessity of mouse_module for oraksil
-oraksil_input_module::oraksil_input_module(const char *type)
+headless_input_module::headless_input_module(const char *type)
 	: input_module_base(type, "headless")
 {
 }
 
-void oraksil_input_module::input_init(running_machine &machine)
+void headless_input_module::input_init(running_machine &machine)
 {
 	if (machine.debug_flags & DEBUG_FLAG_OSD_ENABLED)
 	{
@@ -89,19 +85,19 @@ void oraksil_input_module::input_init(running_machine &machine)
 	}
 }
 
-void oraksil_input_module::exit()
+void headless_input_module::exit()
 {
 	input_module_base::exit();
 }
 
-void oraksil_input_module::handle_input_event(OraksilEvent &key)
+void headless_input_module::handle_input_event(HeadlessKeyEvent &key)
 {
 	devicelist()->for_each_device([key](auto device) {
-		downcast<oraksil_keyboard_device *>(device)->queue_events(&key, 1);
+		downcast<headless_keyboard_device *>(device)->queue_events(&key, 1);
 	});
 }
 
-bool oraksil_input_module::should_poll_devices(running_machine &machine)
+bool headless_input_module::should_poll_devices(running_machine &machine)
 {
 	return true;
 }
@@ -119,26 +115,25 @@ bool oraksil_input_module::should_poll_devices(running_machine &machine)
 		ITEM_ID_##mame, ascii, "ITEM_ID_"#mame, (char *)#mame                \
 	}
 
-oraksil_keyboard_module::oraksil_keyboard_module()
-	: oraksil_input_module(OSD_KEYBOARDINPUT_PROVIDER) //, m_key_trans_table(nullptr)
+headless_keyboard_module::headless_keyboard_module()
+	: headless_input_module(OSD_KEYBOARDINPUT_PROVIDER)
 {
 }
 
-void oraksil_keyboard_module::oraksil_setup_keytable(keyboard_trans_table &table)
+void headless_keyboard_module::setup_keytable(keyboard_trans_table &table)
 {
 }
 
-void oraksil_keyboard_module::before_poll(running_machine &machine)
+void headless_keyboard_module::before_poll(running_machine &machine)
 {
-	return;
 }
 
-void oraksil_keyboard_module::input_init(running_machine &machine)
+void headless_keyboard_module::input_init(running_machine &machine)
 {
-	oraksil_input_module::input_init(machine);
-	oraksil_keyboard_device *devinfo;
+	headless_input_module::input_init(machine);
+	headless_keyboard_device *devinfo;
 
-	key_trans_entry newTable[] = {
+	key_trans_entry new_table[] = {
 		KEY_TRANS_ENTRY0(ESC, ESCAPE, ESCAPE, ESCAPE, VK_ESCAPE, Escape, 27, "ESCAPE"),
 		KEY_TRANS_ENTRY1(DOWN, DOWN, DOWN, DOWN, VK_DOWN, Down, 40),
 		KEY_TRANS_ENTRY1(UP, UP, UP, UP, VK_UP, Up, 38),
@@ -160,17 +155,17 @@ void oraksil_keyboard_module::input_init(running_machine &machine)
 		KEY_TRANS_ENTRY1(G, G, g, G, 'G', G, 'G'),
 
 		KEY_TRANS_ENTRY0(INVALID, UNKNOWN, UNKNOWN, ESCAPE, 0, None, 0, "INVALID")};
-	// keyboard_trans_table *custom_table = auto_alloc(machine, keyboard_trans_table(std::move(newTable), t_table.ize()));
+
 	auto key_trans_entries = std::make_unique<key_trans_entry[]>(18);
 	for (int i = 0; i < 18; i++)
-		key_trans_entries[i] = newTable[i];
+		key_trans_entries[i] = new_table[i];
 
 	// keyboard_trans_table table(std::move(key_trans_entries), (unsigned int)4);
 	keyboard_trans_table *table = auto_alloc(machine, keyboard_trans_table(std::move(key_trans_entries), 18));
 	osd_printf_verbose("Keyboard: Start initialization\n");
 
 	// Oraksil has keyboard only
-	devinfo = devicelist()->create_device<oraksil_keyboard_device>(machine, "System keyboard", "System keyboard", *this);
+	devinfo = devicelist()->create_device<headless_keyboard_device>(machine, "System keyboard", "System keyboard", *this);
 
 	// populate it
 	for (int keynum = 0; (*table)[keynum].mame_key != ITEM_ID_INVALID; keynum++)
@@ -188,12 +183,4 @@ void oraksil_keyboard_module::input_init(running_machine &machine)
 	osd_printf_verbose("Keyboard: End initialization\n");
 }
 
-// #else
-// MODULE_NOT_SUPPORTED(sdl_keyboard_module, OSD_KEYBOARDINPUT_PROVIDER, "sdl")
-// MODULE_NOT_SUPPORTED(sdl_mouse_module, OSD_MOUSEINPUT_PROVIDER, "sdl")
-// MODULE_NOT_SUPPORTED(sdl_joystick_module, OSD_JOYSTICKINPUT_PROVIDER, "sdl")
-// #endif
-
-MODULE_DEFINITION(KEYBOARDINPUT_HEADLESS, oraksil_keyboard_module)
-// MODULE_DEFINITION(MOUSEINPUT_SDL, sdl_mouse_module)
-// MODULE_DEFINITION(JOYSTICKINPUT_SDL, sdl_joystick_module)
+MODULE_DEFINITION(KEYBOARDINPUT_HEADLESS, headless_keyboard_module)
