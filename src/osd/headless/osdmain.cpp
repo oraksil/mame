@@ -21,7 +21,8 @@
 //  main
 //============================================================
 
-int osd_entrypoint(int argc, char** argv, image_buffer_info_t *buf_info, update_callback_t cb)
+// int osd_entrypoint(int argc, char** argv, image_buffer_info_t *buf_info, update_callback_t cb)
+int osd_entrypoint(int argc, char** argv, image_buffer_info_t *buf_info, update_callback_t cb, void** retOSD)
 {
 	std::vector<std::string> args = osd_get_command_line(argc, argv);
 	int res = 0;
@@ -33,6 +34,7 @@ int osd_entrypoint(int argc, char** argv, image_buffer_info_t *buf_info, update_
 	osd_options options;
 	options.set_system_name("dino");
 	options.set_value(OSD_MONITOR_PROVIDER, "headless", OPTION_PRIORITY_MAXIMUM);
+	options.set_value(OSD_KEYBOARDINPUT_PROVIDER, "headless", OPTION_PRIORITY_MAXIMUM);
 	options.set_value(OSDOPTION_SCREEN, OSDOPTVAL_AUTO, OPTION_PRIORITY_MAXIMUM);
 	options.set_value(OSDOPTION_WINDOW, 1, OPTION_PRIORITY_MAXIMUM);
 	options.set_value(OSDOPTION_RESOLUTION, "960x720@60", OPTION_PRIORITY_MAXIMUM);
@@ -41,6 +43,9 @@ int osd_entrypoint(int argc, char** argv, image_buffer_info_t *buf_info, update_
 	osd.register_options();
 	osd.set_buffer_info(buf_info);
 	osd.set_update_callback(cb);
+
+	*retOSD = (void *)&osd;
+
 	res = emulator_info::start_frontend(options, osd, args);
 
 	exit(res);

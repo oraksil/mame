@@ -96,11 +96,3 @@ void headless_osd_interface::render_pixels_on_buffer()
 	);
 	prim.release_lock();
 }
-
-//============================================================
-//  input_update
-//============================================================
-
-void headless_osd_interface::input_update()
-{
-}
