@@ -105,6 +105,8 @@ function osdmodulesbuild()
 		MAME_DIR .. "src/osd/modules/input/input_winhybrid.cpp",
 		MAME_DIR .. "src/osd/modules/input/input_uwp.cpp",
 		MAME_DIR .. "src/osd/modules/input/input_mac.cpp",
+		MAME_DIR .. "src/osd/modules/input/input_headless.cpp",
+		MAME_DIR .. "src/osd/modules/input/input_headless.h",
 		MAME_DIR .. "src/osd/modules/output/output_module.h",
 		MAME_DIR .. "src/osd/modules/output/none.cpp",
 		MAME_DIR .. "src/osd/modules/output/console.cpp",

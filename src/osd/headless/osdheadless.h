@@ -35,6 +35,8 @@ public:
 	virtual bool window_init() override;
 	virtual void window_exit() override;
 
+	input_module* input() { return m_keyboard_input; }
+
 	// for oraksil
 	void set_update_callback(update_callback_t fp) { m_callback = fp; }
 	void set_buffer_info(image_buffer_info_t *buf_info) { m_buffer_info = buf_info; }
