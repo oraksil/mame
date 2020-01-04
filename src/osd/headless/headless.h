@@ -31,8 +31,7 @@ extern "C" {
         int (*run)(const char *system_name);
     } mame_headless_t;
 
-    mame_headless_t* new_mame_headless(mame_frame_info_t frame_info, mame_frame_callback_t cb);
-    void cleanup_mame_headless(mame_headless_t *m);
+    mame_headless_t* get_mame_headless(mame_frame_info_t frame_info, mame_frame_callback_t cb);
 }
 
 #endif
