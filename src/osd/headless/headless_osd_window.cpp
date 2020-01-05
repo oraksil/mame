@@ -8,9 +8,9 @@
 //
 //============================================================
 
-#include "osdheadless.h"
 #include "emu.h"
 #include "render.h"
+#include "headless_osd.h"
 
 bool headless_osd_interface::window_init()
 {

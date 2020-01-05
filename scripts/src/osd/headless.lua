@@ -435,11 +435,12 @@ project ("osd_" .. _OPTIONS["osd"])
 
 	files {
 		MAME_DIR .. "src/osd/headless/headless.h",
-		MAME_DIR .. "src/osd/headless/osdheadless.h",
-		MAME_DIR .. "src/osd/headless/osdmain.cpp",
-		MAME_DIR .. "src/osd/headless/video.cpp",
-		MAME_DIR .. "src/osd/headless/window.cpp",
-		MAME_DIR .. "src/osd/headless/input.cpp",
+		MAME_DIR .. "src/osd/headless/headless.cpp",
+		MAME_DIR .. "src/osd/headless/headless_osd.h",
+		MAME_DIR .. "src/osd/headless/headless_osd.cpp",
+		MAME_DIR .. "src/osd/headless/headless_osd_video.cpp",
+		MAME_DIR .. "src/osd/headless/headless_osd_window.cpp",
+		MAME_DIR .. "src/osd/headless/headless_osd_input.cpp",
 	}
 
 
