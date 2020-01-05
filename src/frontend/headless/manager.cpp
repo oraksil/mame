@@ -11,7 +11,7 @@
 #include "manager.h"
 #include "emuopts.h"
 #include "ui.h"
-#include "headless/osdheadless.h"
+#include "headless/headless_osd.h"
 
 //-------------------------------------------------
 //  headless_machine_manager - constructor

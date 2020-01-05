@@ -8,13 +8,8 @@
 //
 //============================================================
 
-// MAME headers
 #include "emu.h"
-
-// MAMEOS headers
-#include "osdheadless.h"
-
-// MODULES headers
+#include "headless_osd.h"
 #include "rendersw.hxx"
 
 

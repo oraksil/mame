@@ -12,6 +12,14 @@ extern int osd_num_processors;
 
 class render_target;
 
+typedef void (*update_callback_t)(bool);
+
+typedef struct {
+    int width;
+    int height;
+    uint8_t *buffer;
+} image_buffer_info_t;
+
 class headless_osd_interface : public osd_common_t
 {
 public:
@@ -37,15 +45,13 @@ public:
 
 	input_module* input() { return m_keyboard_input; }
 
-	// for oraksil
 	void set_update_callback(update_callback_t fp) { m_callback = fp; }
 	void set_buffer_info(image_buffer_info_t *buf_info) { m_buffer_info = buf_info; }
-	void on_machine_setup() {}
+	void on_machine_setup();
 
 private:
 	render_target *m_target;
 
-	// for oraksil
 	update_callback_t m_callback;
 	image_buffer_info_t *m_buffer_info;
 
