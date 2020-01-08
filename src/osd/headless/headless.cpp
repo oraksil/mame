@@ -4,62 +4,90 @@
 #include "headless.h"
 #include "headless_osd.h"
 
-const int COLOR_DEPTH_BYTES = 4;
+typedef struct {
+    int width;
+    int height;
+} mame_frame_info_t;
 
-static mame_headless_t *s_instance;
+typedef struct {
+    mame_t *mame;
 
-static headless_osd_interface *s_osd;
-static osd_options *s_options;
-static mame_frame_callback_t s_frame_cb;
-static mame_frame_t s_frame;
-static image_buffer_info_t s_buf_info;
+    mame_frame_t frame;
+    mame_frame_callback_t frame_cb;
+
+    osd_options *opts;
+    headless_osd_interface *osd;
+    image_buffer_info_t buf_info;
+} mame_internal_t;
+
+static mame_internal_t *s_inst;
 
 static void osd_update_cb(bool skip_redraw)
 {
-    if (s_frame_cb != nullptr) {
-        s_frame_cb(s_frame);
-    }
+    assert(s_inst != nullptr);
+    assert(s_inst->frame_cb != nullptr);
+
+    s_inst->frame_cb(s_inst->frame);
 }
 
-static void headless_init(mame_frame_info_t &frame_info, mame_frame_callback_t cb)
+static void headless_init()
 {
-    assert(s_osd == nullptr);
-    assert(s_options == nullptr);
-    assert(s_frame_cb == nullptr);
+    assert(s_inst != nullptr);
+    assert(s_inst->osd == nullptr);
+    assert(s_inst->opts == nullptr);
+    assert(s_inst->frame_cb == nullptr);
+
+    s_inst->opts = new osd_options();
+    s_inst->opts->set_value(OSD_MONITOR_PROVIDER, "headless", OPTION_PRIORITY_MAXIMUM);
+    s_inst->opts->set_value(OSD_KEYBOARDINPUT_PROVIDER, "headless", OPTION_PRIORITY_MAXIMUM);
+    s_inst->opts->set_value(OSDOPTION_SCREEN, OSDOPTVAL_AUTO, OPTION_PRIORITY_MAXIMUM);
+    s_inst->opts->set_value(OSDOPTION_WINDOW, 1, OPTION_PRIORITY_MAXIMUM);
+
+    s_inst->osd = new headless_osd_interface(*s_inst->opts);
+    s_inst->osd->register_options();
+}
+
+const int COLOR_DEPTH_BYTES = 4;
+static void headless_set_frame_info(int w, int h)
+{
+    assert(s_inst != nullptr);
+    assert(s_inst->osd != nullptr);
+    assert(s_inst->opts != nullptr);
 
     char resolution[16];
-    sprintf(resolution, "%dx%d@60", frame_info.width, frame_info.height);
-    s_options = new osd_options();
-    s_options->set_value(OSD_MONITOR_PROVIDER, "headless", OPTION_PRIORITY_MAXIMUM);
-    s_options->set_value(OSD_KEYBOARDINPUT_PROVIDER, "headless", OPTION_PRIORITY_MAXIMUM);
-    s_options->set_value(OSDOPTION_SCREEN, OSDOPTVAL_AUTO, OPTION_PRIORITY_MAXIMUM);
-    s_options->set_value(OSDOPTION_WINDOW, 1, OPTION_PRIORITY_MAXIMUM);
-    s_options->set_value(OSDOPTION_RESOLUTION, resolution, OPTION_PRIORITY_MAXIMUM);
+    sprintf(resolution, "%dx%d@60", w, h);
+    s_inst->opts->set_value(OSDOPTION_RESOLUTION, resolution, OPTION_PRIORITY_MAXIMUM);
 
-    s_frame.buf_size = frame_info.width * frame_info.height * COLOR_DEPTH_BYTES;
-    s_frame.buffer = new uint8_t[s_frame.buf_size];
-    s_frame_cb = cb;
+    if (s_inst->frame.buffer != nullptr)
+        delete s_inst->frame.buffer;
+    s_inst->frame.buf_size = w * h * COLOR_DEPTH_BYTES;
+    s_inst->frame.buffer = new uint8_t[s_inst->frame.buf_size];
 
-    s_buf_info.width = frame_info.width;
-    s_buf_info.height = frame_info.height;
-    s_buf_info.buffer = s_frame.buffer;
+    s_inst->buf_info.width = w;
+    s_inst->buf_info.height = h;
+    s_inst->buf_info.buffer = s_inst->frame.buffer;
 
-    s_osd = new headless_osd_interface(*s_options);
-    s_osd->register_options();
-    s_osd->set_buffer_info(&s_buf_info);
-    s_osd->set_update_callback(osd_update_cb);
+    s_inst->osd->set_buffer_info(&s_inst->buf_info);
+}
+
+static void headless_set_frame_cb(mame_frame_callback_t frame_cb)
+{
+    assert(s_inst != nullptr);
+    assert(s_inst->osd != nullptr);
+
+    s_inst->frame_cb = frame_cb;
+    s_inst->osd->set_update_callback(osd_update_cb);
 }
 
 static void headless_enqueue_input_evt(mame_input_event_t input_event)
 {
-    assert(s_osd != nullptr);
-    assert(s_options != nullptr);
+    assert(s_inst != nullptr);
+    assert(s_inst->osd != nullptr);
 
-    input_module *keyboard_input = s_osd->input();
+    input_module *keyboard_input = s_inst->osd->input();
     headless_input_module *mod = dynamic_cast<headless_input_module*>(keyboard_input);
-    if (mod == nullptr) {
+    if (mod == nullptr)
         return;
-    }
 
     HeadlessKeyEvent event;
     event.ascii_key = input_event.key;
@@ -71,29 +99,33 @@ static void headless_enqueue_input_evt(mame_input_event_t input_event)
 
 static int headless_run(const char *system_name)
 {
-    assert(s_osd != nullptr);
-    assert(s_options != nullptr);
+    assert(s_inst != nullptr);
+    assert(s_inst->osd != nullptr);
+    assert(s_inst->opts != nullptr);
 
     std::vector<std::string> dummy_args;
 
-    s_options->set_system_name(system_name);
+    s_inst->opts->set_system_name(system_name);
 
-    return emulator_info::start_frontend(*s_options, *s_osd, dummy_args);
+    return emulator_info::start_frontend(*s_inst->opts, *s_inst->osd, dummy_args);
 }
 
-mame_headless_t* get_mame_headless(mame_frame_info_t frame_info, mame_frame_callback_t cb)
+mame_t* get_mame_instance()
 {
-    if (s_instance != nullptr) {
-        return s_instance;
+    if (s_inst != nullptr && s_inst->mame != nullptr) {
+        return s_inst->mame;
     }
 
-    s_instance = new mame_headless_t();
-    s_instance->enqueue_input_event = headless_enqueue_input_evt;
-    s_instance->run = headless_run;
+    s_inst = new mame_internal_t();
+    s_inst->mame = new mame_t();
+    s_inst->mame->set_frame_info = headless_set_frame_info;
+    s_inst->mame->set_frame_cb = headless_set_frame_cb;
+    s_inst->mame->enqueue_input_event = headless_enqueue_input_evt;
+    s_inst->mame->run = headless_run;
 
-    headless_init(frame_info, cb);
+    headless_init();
 
-    return s_instance;
+    return s_inst->mame;
 }
 
 void on_mame_machine_setup()
