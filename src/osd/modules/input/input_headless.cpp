@@ -108,11 +108,11 @@ bool headless_input_module::should_poll_devices(running_machine &machine)
 
 #define KEY_TRANS_ENTRY0(mame, sdlsc, sdlkey, disc, virtual, uwp, ascii, UI) \
 	{                                                                        \
-		ITEM_ID_##mame, ascii, "ITEM_ID_"#mame, (char *)UI           		 \
+		ITEM_ID_##mame, ascii, "ITEM_ID_" #mame, (char *)UI                  \
 	}
-#define KEY_TRANS_ENTRY1(mame, sdlsc, sdlkey, disc, virtual, uwp, ascii)     \
-	{                                                                        \
-		ITEM_ID_##mame, ascii, "ITEM_ID_"#mame, (char *)#mame                \
+#define KEY_TRANS_ENTRY1(mame, sdlsc, sdlkey, disc, virtual, uwp, ascii) \
+	{                                                                    \
+		ITEM_ID_##mame, ascii, "ITEM_ID_" #mame, (char *)#mame           \
 	}
 
 headless_keyboard_module::headless_keyboard_module()
@@ -141,8 +141,10 @@ void headless_keyboard_module::input_init(running_machine &machine)
 		KEY_TRANS_ENTRY1(RIGHT, RIGHT, RIGHT, RIGHT, VK_RIGHT, Right, 39),
 		KEY_TRANS_ENTRY1(1, 1, 1, 1, '1', Number1, 49),
 		KEY_TRANS_ENTRY1(5, 5, 5, 5, '5', Number5, 53),
-		KEY_TRANS_ENTRY1(LCONTROL, LCTRL, LCTRL, LCONTROL, VK_LCONTROL, LeftControl, 17),
-		KEY_TRANS_ENTRY1(LALT, LALT, LALT, LMENU, VK_LMENU, LeftMenu, 18),
+		// KEY_TRANS_ENTRY1(LCONTROL, LCTRL, LCTRL, LCONTROL, VK_LCONTROL, LeftControl, 17),
+		// KEY_TRANS_ENTRY1(LALT, LALT, LALT, LMENU, VK_LMENU, LeftMenu, 18),
+		KEY_TRANS_ENTRY1(LCONTROL, LCTRL, LCTRL, LCONTROL, VK_LCONTROL, LeftControl, 90),
+		KEY_TRANS_ENTRY1(LALT, LALT, LALT, LMENU, VK_LMENU, LeftMenu, 88),
 
 		// player2
 		KEY_TRANS_ENTRY1(A, A, a, A, 'A', A, 'A'),
@@ -154,14 +156,24 @@ void headless_keyboard_module::input_init(running_machine &machine)
 		KEY_TRANS_ENTRY1(D, D, d, D, 'D', D, 'D'),
 		KEY_TRANS_ENTRY1(G, G, g, G, 'G', G, 'G'),
 
+		// player3
+		KEY_TRANS_ENTRY1(I, I, i, I, 'I', I, 'I'),
+		KEY_TRANS_ENTRY1(J, J, j, J, 'J', J, 'J'),
+		KEY_TRANS_ENTRY1(K, K, k, K, 'K', K, 'K'),
+		KEY_TRANS_ENTRY1(L, L, l, L, 'L', L, 'L'),
+		KEY_TRANS_ENTRY1(3, 3, 3, 3, '3', 3, '3'),
+		KEY_TRANS_ENTRY1(7, 7, 7, 7, '7', 7, '7'),
+		KEY_TRANS_ENTRY1(RCONTROL, RCTRL, RCTRL, RCONTROL, VK_RCONTROL, RightControl, 89),
+		KEY_TRANS_ENTRY1(RSHIFT, RSHIFT, RSHIFT, RSHIFT, VK_RSHIFT, RightMenu, 84),
+
 		KEY_TRANS_ENTRY0(INVALID, UNKNOWN, UNKNOWN, ESCAPE, 0, None, 0, "INVALID")};
 
-	auto key_trans_entries = std::make_unique<key_trans_entry[]>(18);
-	for (int i = 0; i < 18; i++)
+	auto key_trans_entries = std::make_unique<key_trans_entry[]>(26);
+	for (int i = 0; i < 26; i++)
 		key_trans_entries[i] = new_table[i];
 
 	// keyboard_trans_table table(std::move(key_trans_entries), (unsigned int)4);
-	keyboard_trans_table *table = auto_alloc(machine, keyboard_trans_table(std::move(key_trans_entries), 18));
+	keyboard_trans_table *table = auto_alloc(machine, keyboard_trans_table(std::move(key_trans_entries), 26));
 	osd_printf_verbose("Keyboard: Start initialization\n");
 
 	// Oraksil has keyboard only
