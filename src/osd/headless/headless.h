@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <cstddef>
 
 #ifndef MAME_HEADLESS_H
 #define MAME_HEADLESS_H
