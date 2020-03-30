@@ -14,6 +14,7 @@ typedef struct {
 
     mame_frame_t frame;
     mame_frame_callback_t frame_cb;
+    void *frame_cb_ctx;
 
     osd_options *opts;
     headless_osd_interface *osd;
@@ -27,7 +28,7 @@ static void osd_update_cb(bool skip_redraw)
     assert(s_inst != nullptr);
     assert(s_inst->frame_cb != nullptr);
 
-    s_inst->frame_cb(s_inst->frame);
+    s_inst->frame_cb(s_inst->frame_cb_ctx, s_inst->frame);
 }
 
 static void headless_init()
@@ -70,12 +71,13 @@ static void headless_set_frame_info(int w, int h)
     s_inst->osd->set_buffer_info(&s_inst->buf_info);
 }
 
-static void headless_set_frame_cb(mame_frame_callback_t frame_cb)
+static void headless_set_frame_cb(void *ctx, mame_frame_callback_t frame_cb)
 {
     assert(s_inst != nullptr);
     assert(s_inst->osd != nullptr);
 
     s_inst->frame_cb = frame_cb;
+    s_inst->frame_cb_ctx = ctx;
     s_inst->osd->set_update_callback(osd_update_cb);
 }
 
