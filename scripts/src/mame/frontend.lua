@@ -58,8 +58,8 @@ end
 
 if (_OPTIONS["osd"] == "headless") then
 files {
-	MAME_DIR .. "src/frontend/headless/audit.cpp",
-	MAME_DIR .. "src/frontend/headless/audit.h",
+	-- MAME_DIR .. "src/frontend/headless/audit.cpp",
+	-- MAME_DIR .. "src/frontend/headless/audit.h",
 	MAME_DIR .. "src/frontend/headless/ui.cpp",
 	MAME_DIR .. "src/frontend/headless/ui.h",
 	MAME_DIR .. "src/frontend/headless/manager.cpp",
@@ -187,9 +187,9 @@ files {
 	MAME_DIR .. "src/frontend/mame/ui/widgets.cpp",
 	MAME_DIR .. "src/frontend/mame/ui/widgets.h",
 }
-end
 
 pchsource(MAME_DIR .. "src/frontend/mame/audit.cpp")
+end
 
 dependency {
 	{ MAME_DIR .. "src/frontend/mame/ui/about.cpp", GEN_DIR .. "emu/copying.ipp" },
