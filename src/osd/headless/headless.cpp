@@ -81,6 +81,14 @@ static void headless_set_frame_cb(void *ctx, mame_frame_callback_t frame_cb)
     s_inst->osd->set_update_callback(osd_update_cb);
 }
 
+static void headless_set_sound_cb(mame_sound_callback_t sound_cb)
+{
+    assert(s_inst != nullptr);
+    assert(s_inst->osd != nullptr);
+
+    s_inst->osd->set_sound_callback(sound_cb);
+}
+
 static void headless_enqueue_input_evt(mame_input_event_t input_event)
 {
     assert(s_inst != nullptr);
@@ -122,6 +130,7 @@ mame_t* get_mame_instance()
     s_inst->mame = new mame_t();
     s_inst->mame->set_frame_info = headless_set_frame_info;
     s_inst->mame->set_frame_cb = headless_set_frame_cb;
+    s_inst->mame->set_sound_cb = headless_set_sound_cb;;
     s_inst->mame->enqueue_input_event = headless_enqueue_input_evt;
     s_inst->mame->run = headless_run;
 

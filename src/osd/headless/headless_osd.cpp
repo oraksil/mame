@@ -19,7 +19,7 @@ void on_mame_machine_setup();
 //============================================================
 
 headless_osd_interface::headless_osd_interface(osd_options &options)
-	: osd_common_t(options)
+	: osd_common_t(options), m_sound_cb(nullptr)
 {
 }
 
@@ -67,3 +67,4 @@ void headless_osd_interface::on_machine_setup()
 {
 	on_mame_machine_setup();
 }
+
