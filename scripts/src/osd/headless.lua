@@ -439,6 +439,7 @@ project ("osd_" .. _OPTIONS["osd"])
 		MAME_DIR .. "src/osd/headless/headless_osd.h",
 		MAME_DIR .. "src/osd/headless/headless_osd.cpp",
 		MAME_DIR .. "src/osd/headless/headless_osd_video.cpp",
+		MAME_DIR .. "src/osd/headless/headless_osd_sound.cpp",
 		MAME_DIR .. "src/osd/headless/headless_osd_window.cpp",
 		MAME_DIR .. "src/osd/headless/headless_osd_input.cpp",
 	}
