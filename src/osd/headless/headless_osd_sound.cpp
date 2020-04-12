@@ -14,11 +14,10 @@
 void headless_osd_interface::update_audio_stream(const int16_t *buffer, int samples_this_frame)
 {
 	// osd_printf_debug("sound sample, %p, size of %d\n", buffer, bytes_this_frame);
-
-	if (m_sound_cb)
+	if (m_sound_frame_cb)
 	{
 		size_t bytes_this_frame = samples_this_frame * sizeof(*buffer) * 2;
-		mame_sound_t sound = {.buffer = buffer, .buf_size = bytes_this_frame};
-		(*m_sound_cb)(sound);
+		sound_frame_buf_info_t sound_buf = {.buffer = buffer, .buf_size = bytes_this_frame};
+		(*m_sound_frame_cb)(sound_buf);
 	}
 }
