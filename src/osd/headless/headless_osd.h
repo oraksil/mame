@@ -6,19 +6,24 @@
 #pragma once
 
 #include "modules/lib/osdobj_common.h"
-#include "headless.h"
 
 extern int osd_num_processors;
 
 class render_target;
 
-typedef void (*update_callback_t)(bool);
-
 typedef struct {
     int width;
     int height;
     uint8_t *buffer;
-} image_buffer_info_t;
+} image_frame_buf_info_t;
+
+typedef struct {
+	const int16_t *buffer;
+ 	size_t buf_size;
+} sound_frame_buf_info_t;
+
+typedef void (*image_frame_callback_t)(bool);
+typedef void (*sound_frame_callback_t)(sound_frame_buf_info_t);
 
 class headless_osd_interface : public osd_common_t
 {
@@ -43,20 +48,21 @@ public:
 	virtual bool window_init() override;
 	virtual void window_exit() override;
 
+	virtual void update_audio_stream(const int16_t *buffer, int samples_this_frame) override;
+
 	input_module* input() { return m_keyboard_input; }
 
-	void set_update_callback(update_callback_t fp) { m_callback = fp; }
-	void set_sound_callback(mame_sound_callback_t fp) { m_sound_cb = fp; }
-	void set_buffer_info(image_buffer_info_t *buf_info) { m_buffer_info = buf_info; }
+	void set_image_buffer_info(image_frame_buf_info_t *buf_info) { m_buffer_info = buf_info; }
+	void set_image_frame_cb(image_frame_callback_t fp) { m_image_frame_cb = fp; }
+	void set_sound_frame_cb(sound_frame_callback_t fp) { m_sound_frame_cb = fp; }
 	void on_machine_setup();
 
-	virtual void update_audio_stream(const int16_t *buffer, int samples_this_frame) override;
 private:
 	render_target *m_target;
 
-	update_callback_t m_callback;
-	mame_sound_callback_t m_sound_cb;
-	image_buffer_info_t *m_buffer_info;
+	image_frame_buf_info_t *m_buffer_info;
+	image_frame_callback_t m_image_frame_cb;
+	sound_frame_callback_t m_sound_frame_cb;
 
 	void set_starting_view(int index);
 	void render_pixels_and_callback(bool skip_redraw);

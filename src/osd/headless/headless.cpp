@@ -11,24 +11,35 @@ typedef struct {
 
 typedef struct {
     mame_t *mame;
-
-    mame_frame_t frame;
-    mame_frame_callback_t frame_cb;
-    void *frame_cb_ctx;
-
     osd_options *opts;
     headless_osd_interface *osd;
-    image_buffer_info_t buf_info;
+    image_frame_buf_info_t image_buf_info;
+
+    mame_image_frame_t image_frame;
+    mame_image_frame_cb_t image_frame_cb;
+    void *image_frame_cb_ctx;
+
+    mame_sound_frame_cb_t sound_frame_cb;
+    void *sound_frame_cb_ctx;
 } mame_internal_t;
 
 static mame_internal_t *s_inst;
 
-static void osd_update_cb(bool skip_redraw)
+static void osd_frame_cb(bool skip_redraw)
 {
     assert(s_inst != nullptr);
-    assert(s_inst->frame_cb != nullptr);
+    assert(s_inst->image_frame_cb != nullptr);
 
-    s_inst->frame_cb(s_inst->frame_cb_ctx, s_inst->frame);
+    s_inst->image_frame_cb(s_inst->image_frame_cb_ctx, s_inst->image_frame);
+}
+
+static void osd_sound_cb(sound_frame_buf_info_t buf)
+{
+    assert(s_inst != nullptr);
+    assert(s_inst->sound_frame_cb != nullptr);
+
+    mame_sound_frame_t snd_buf = { .buffer = buf.buffer, .buf_size = buf.buf_size };
+    s_inst->sound_frame_cb(s_inst->sound_frame_cb_ctx, snd_buf);
 }
 
 static void headless_init()
@@ -36,7 +47,8 @@ static void headless_init()
     assert(s_inst != nullptr);
     assert(s_inst->osd == nullptr);
     assert(s_inst->opts == nullptr);
-    assert(s_inst->frame_cb == nullptr);
+    assert(s_inst->image_frame_cb == nullptr);
+    assert(s_inst->sound_frame_cb == nullptr);
 
     s_inst->opts = new osd_options();
     s_inst->opts->set_value(OSD_MONITOR_PROVIDER, "headless", OPTION_PRIORITY_MAXIMUM);
@@ -59,34 +71,37 @@ static void headless_set_frame_info(int w, int h)
     sprintf(resolution, "%dx%d@60", w, h);
     s_inst->opts->set_value(OSDOPTION_RESOLUTION, resolution, OPTION_PRIORITY_MAXIMUM);
 
-    if (s_inst->frame.buffer != nullptr)
-        delete s_inst->frame.buffer;
-    s_inst->frame.buf_size = w * h * COLOR_DEPTH_BYTES;
-    s_inst->frame.buffer = new uint8_t[s_inst->frame.buf_size];
+    if (s_inst->image_frame.buffer != nullptr)
+        delete s_inst->image_frame.buffer;
+    s_inst->image_frame.buf_size = w * h * COLOR_DEPTH_BYTES;
+    s_inst->image_frame.buffer = new uint8_t[s_inst->image_frame.buf_size];
 
-    s_inst->buf_info.width = w;
-    s_inst->buf_info.height = h;
-    s_inst->buf_info.buffer = s_inst->frame.buffer;
+    s_inst->image_buf_info.width = w;
+    s_inst->image_buf_info.height = h;
+    s_inst->image_buf_info.buffer = s_inst->image_frame.buffer;
 
-    s_inst->osd->set_buffer_info(&s_inst->buf_info);
+    s_inst->osd->set_image_buffer_info(&s_inst->image_buf_info);
 }
 
-static void headless_set_frame_cb(void *ctx, mame_frame_callback_t frame_cb)
+static void headless_set_image_frame_cb(void *ctx, mame_image_frame_cb_t frame_cb)
 {
     assert(s_inst != nullptr);
     assert(s_inst->osd != nullptr);
 
-    s_inst->frame_cb = frame_cb;
-    s_inst->frame_cb_ctx = ctx;
-    s_inst->osd->set_update_callback(osd_update_cb);
+    s_inst->image_frame_cb = frame_cb;
+    s_inst->image_frame_cb_ctx = ctx;
+    s_inst->osd->set_image_frame_cb(osd_frame_cb);
 }
 
-static void headless_set_sound_cb(mame_sound_callback_t sound_cb)
+static void headless_set_sound_frame_cb(void *ctx, mame_sound_frame_cb_t frame_cb)
 {
     assert(s_inst != nullptr);
     assert(s_inst->osd != nullptr);
 
-    s_inst->osd->set_sound_callback(sound_cb);
+    s_inst->sound_frame_cb = frame_cb;
+    s_inst->sound_frame_cb_ctx = ctx;
+
+    s_inst->osd->set_sound_frame_cb(osd_sound_cb);
 }
 
 static void headless_enqueue_input_evt(mame_input_event_t input_event)
@@ -128,9 +143,9 @@ mame_t* get_mame_instance()
 
     s_inst = new mame_internal_t();
     s_inst->mame = new mame_t();
-    s_inst->mame->set_frame_info = headless_set_frame_info;
-    s_inst->mame->set_frame_cb = headless_set_frame_cb;
-    s_inst->mame->set_sound_cb = headless_set_sound_cb;;
+    s_inst->mame->set_image_frame_info = headless_set_frame_info;
+    s_inst->mame->set_image_frame_cb = headless_set_image_frame_cb;
+    s_inst->mame->set_sound_frame_cb = headless_set_sound_frame_cb;;
     s_inst->mame->enqueue_input_event = headless_enqueue_input_evt;
     s_inst->mame->run = headless_run;
 

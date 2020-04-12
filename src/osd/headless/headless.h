@@ -18,20 +18,20 @@ extern "C" {
     typedef struct {
         uint8_t *buffer;
         size_t buf_size;
-    } mame_frame_t;
+    } mame_image_frame_t;
 
     typedef struct {
         const int16_t *buffer;
         size_t buf_size;
-    } mame_sound_t;
+    } mame_sound_frame_t;
 
-    typedef void (*mame_frame_callback_t)(void *ctx, mame_frame_t frame);
-    typedef void (*mame_sound_callback_t)(mame_sound_t sound);
+    typedef void (*mame_image_frame_cb_t)(void *ctx, mame_image_frame_t frame);
+    typedef void (*mame_sound_frame_cb_t)(void *ctx, mame_sound_frame_t frame);
 
     typedef struct {
-        void (*set_frame_info)(int w, int h);
-        void (*set_frame_cb)(void *ctx, mame_frame_callback_t frame_cb);
-        void (*set_sound_cb)(mame_sound_callback_t frame_cb);
+        void (*set_image_frame_info)(int w, int h);
+        void (*set_image_frame_cb)(void *ctx, mame_image_frame_cb_t frame_cb);
+        void (*set_sound_frame_cb)(void *ctx, mame_sound_frame_cb_t frame_cb);
         void (*enqueue_input_event)(mame_input_event_t input_event);
         int (*run)(const char *system_name);
     } mame_t;
