@@ -69,8 +69,8 @@ void headless_osd_interface::render_pixels_and_callback(bool skip_redraw)
 {
 	render_pixels_on_buffer();
 
-	if (m_callback)
-		(*m_callback)(skip_redraw);
+	if (m_image_frame_cb)
+		(*m_image_frame_cb)(skip_redraw);
 }
 
 void headless_osd_interface::render_pixels_on_buffer()

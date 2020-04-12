@@ -19,7 +19,9 @@ void on_mame_machine_setup();
 //============================================================
 
 headless_osd_interface::headless_osd_interface(osd_options &options)
-	: osd_common_t(options), m_sound_cb(nullptr)
+	: osd_common_t(options)
+	, m_image_frame_cb(nullptr)
+	, m_sound_frame_cb(nullptr)
 {
 }
 
