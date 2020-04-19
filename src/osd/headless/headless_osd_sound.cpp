@@ -16,8 +16,12 @@ void headless_osd_interface::update_audio_stream(const int16_t *buffer, int samp
 	// osd_printf_debug("sound sample, %p, size of %d\n", buffer, bytes_this_frame);
 	if (m_sound_frame_cb)
 	{
-		size_t bytes_this_frame = samples_this_frame * sizeof(*buffer) * 2;
-		sound_frame_buf_info_t sound_buf = {.buffer = buffer, .buf_size = bytes_this_frame};
+		sound_frame_buf_info_t sound_buf = {
+			.buffer = buffer,
+			.sample_rate = 48000,
+			.samples = samples_this_frame,
+			.channels = 2
+		};
 		(*m_sound_frame_cb)(sound_buf);
 	}
 }

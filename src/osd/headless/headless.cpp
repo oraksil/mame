@@ -38,7 +38,12 @@ static void osd_sound_cb(sound_frame_buf_info_t buf)
     assert(s_inst != nullptr);
     assert(s_inst->sound_frame_cb != nullptr);
 
-    mame_sound_frame_t snd_buf = { .buffer = buf.buffer, .buf_size = buf.buf_size };
+    mame_sound_frame_t snd_buf = {
+        .buffer = buf.buffer,
+        .sample_rate = buf.sample_rate,
+        .samples = buf.samples,
+        .channels = buf.channels
+    };
     s_inst->sound_frame_cb(s_inst->sound_frame_cb_ctx, snd_buf);
 }
 
