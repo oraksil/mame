@@ -22,7 +22,9 @@ extern "C" {
 
     typedef struct {
         const int16_t *buffer;
-        size_t buf_size;
+        const int sample_rate;
+        const int samples;
+        const int channels;
     } mame_sound_frame_t;
 
     typedef void (*mame_image_frame_cb_t)(void *ctx, mame_image_frame_t frame);

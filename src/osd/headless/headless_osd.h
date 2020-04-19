@@ -19,7 +19,9 @@ typedef struct {
 
 typedef struct {
 	const int16_t *buffer;
- 	size_t buf_size;
+	const int sample_rate;
+	const int samples;
+	const int channels;
 } sound_frame_buf_info_t;
 
 typedef void (*image_frame_callback_t)(bool);
