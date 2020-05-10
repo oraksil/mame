@@ -307,7 +307,7 @@ u8 const inp_header::MAGIC[inp_header::OFFS_BASETIME - inp_header::OFFS_MAGIC] =
 //  BUILT-IN CORE MAPPINGS
 //**************************************************************************
 
-#include "inpttype.ipp"
+#include "inpttype_headless.ipp"
 
 
 
