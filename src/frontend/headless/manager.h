@@ -29,12 +29,12 @@ public:
 	headless_machine_manager(emu_options &options, osd_interface &osd);
 	~headless_machine_manager();
 
-	virtual ui_manager* create_ui(running_machine& machine);
-	virtual void create_custom(running_machine& machine);
-	virtual void load_cheatfiles(running_machine& machine);
-	virtual void ui_initialize(running_machine& machine);
-	virtual void before_load_settings(running_machine &machine);
-	virtual void update_machine();
+	virtual ui_manager* create_ui(running_machine& machine) override;
+	virtual void create_custom(running_machine& machine) override;
+	virtual void load_cheatfiles(running_machine& machine) override;
+	virtual void ui_initialize(running_machine& machine) override;
+	virtual void before_load_settings(running_machine &machine) override;
+	virtual void update_machine() override;
 
 	int execute();
 
