@@ -147,10 +147,9 @@ void headless_keyboard_module::input_init(running_machine &machine)
 		KEY_TRANS_ENTRY1(SPACE, SPACE, SPACE, SPACE, SPACE, SPACE, 67),
 		KEY_TRANS_ENTRY1(LSHIFT, LSHIFT, LSHIFT, LSHIFT, LSHIFT, LSHIFT, 65),
 		KEY_TRANS_ENTRY1(Z, Z, z, Z, 'Z', Z, 83),
-		KEY_TRANS_ENTRY1(X, X, x, X, 'X', X, 68), 
-		KEY_TRANS_ENTRY1(C, C, c, C, 'C', C, 81), 
-		KEY_TRANS_ENTRY1(V, V, v, V, 'V', V, 87), 
-
+		KEY_TRANS_ENTRY1(X, X, x, X, 'X', X, 68),
+		KEY_TRANS_ENTRY1(C, C, c, C, 'C', C, 81),
+		KEY_TRANS_ENTRY1(V, V, v, V, 'V', V, 87),
 
 		// player2
 		KEY_TRANS_ENTRY1(R, R, r, R, 'R', R, 1),
@@ -216,9 +215,10 @@ void headless_keyboard_module::input_init(running_machine &machine)
 		// KEY_TRANS_ENTRY1(F18, F18, F18, F18, F18, F18, 98),
 		// KEY_TRANS_ENTRY1(F19, F19, F19, F19, F19, F19, 99),
 
-		KEY_TRANS_ENTRY0(INVALID, UNKNOWN, UNKNOWN, ESCAPE, 0, None, 0, "INVALID")};
+		KEY_TRANS_ENTRY0(INVALID, UNKNOWN, UNKNOWN, ESCAPE, 0, None, 0, "INVALID")
+	};
 
-	const int NUM_KEYS = sizeof(new_table);
+	const int NUM_KEYS = sizeof(new_table) / sizeof(key_trans_entry);
 
 	auto key_trans_entries = std::make_unique<key_trans_entry[]>(NUM_KEYS);
 	for (int i = 0; i < NUM_KEYS; i++)
