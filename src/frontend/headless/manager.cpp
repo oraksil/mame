@@ -60,7 +60,8 @@ int headless_machine_manager::execute()
 
 void headless_machine_manager::update_machine()
 {
-	headless_osd_interface &osd = dynamic_cast<headless_osd_interface&>(m_osd);
+    headless_osd_interface &osd = dynamic_cast<headless_osd_interface&>(m_osd);
+    
     osd.on_machine_setup();
 }
 
