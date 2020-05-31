@@ -62,7 +62,8 @@ void headless_osd_interface::update(bool skip_redraw)
 {
 	osd_common_t::update(skip_redraw);
 
-	render_pixels_and_callback(skip_redraw);
+	if (!machine().paused())
+		render_pixels_and_callback(skip_redraw);
 }
 
 void headless_osd_interface::render_pixels_and_callback(bool skip_redraw)

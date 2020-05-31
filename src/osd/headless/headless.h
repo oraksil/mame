@@ -35,7 +35,10 @@ extern "C" {
         void (*set_image_frame_cb)(void *ctx, mame_image_frame_cb_t frame_cb);
         void (*set_sound_frame_cb)(void *ctx, mame_sound_frame_cb_t frame_cb);
         void (*enqueue_input_event)(mame_input_event_t input_event);
+
         int (*run)(const char *system_name);
+        void (*pause)();
+        void (*resume)();
     } mame_t;
 
     mame_t* get_mame_instance();
