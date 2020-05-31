@@ -140,6 +140,20 @@ static int headless_run(const char *system_name)
     return emulator_info::start_frontend(*s_inst->opts, *s_inst->osd, dummy_args);
 }
 
+static void headless_pause() {
+    assert(s_inst != nullptr);
+    assert(s_inst->osd != nullptr);
+
+    s_inst->osd->machine().pause();
+}
+
+static void headless_resume() {
+    assert(s_inst != nullptr);
+    assert(s_inst->osd != nullptr);
+
+    s_inst->osd->machine().resume();
+}
+
 mame_t* get_mame_instance()
 {
     if (s_inst != nullptr && s_inst->mame != nullptr) {
@@ -153,6 +167,8 @@ mame_t* get_mame_instance()
     s_inst->mame->set_sound_frame_cb = headless_set_sound_frame_cb;;
     s_inst->mame->enqueue_input_event = headless_enqueue_input_evt;
     s_inst->mame->run = headless_run;
+    s_inst->mame->pause = headless_pause;
+    s_inst->mame->resume = headless_resume;
 
     headless_init();
 
