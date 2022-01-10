@@ -52,7 +52,7 @@ void emulator_info::sound_hook()
 {
 }
 
-void emulator_info::layout_file_cb(util::xml::data_node const &layout)
+void emulator_info::layout_script_cb(layout_file &file, const char *script)
 {
 }
 
