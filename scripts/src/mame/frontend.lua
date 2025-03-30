@@ -26,6 +26,7 @@ includedirs {
 	MAME_DIR .. "src/osd",
 	MAME_DIR .. "src/emu",
 	MAME_DIR .. "src/frontend/mame",
+	MAME_DIR .. "src/frontend/headless",
 	MAME_DIR .. "src/devices", -- till deps are fixed
 	MAME_DIR .. "src/lib",
 	MAME_DIR .. "src/lib/util",
@@ -57,6 +58,20 @@ if (_OPTIONS["osd"] == "sdl") then
 	}
 end
 
+if (_OPTIONS["osd"] == "headless") then
+files {
+	MAME_DIR .. "src/frontend/headless/audit.cpp",
+	MAME_DIR .. "src/frontend/headless/audit.h",
+	MAME_DIR .. "src/frontend/headless/ui.cpp",
+	MAME_DIR .. "src/frontend/headless/ui.h",
+	MAME_DIR .. "src/frontend/headless/manager.cpp",
+	MAME_DIR .. "src/frontend/headless/manager.h",
+	MAME_DIR .. "src/frontend/headless/frontend.h",
+	MAME_DIR .. "src/frontend/headless/frontend.cpp",
+	MAME_DIR .. "src/frontend/headless/emu.cpp",
+}
+pchsource(MAME_DIR .. "src/frontend/headless/audit.cpp")
+else
 files {
 	MAME_DIR .. "src/frontend/mame/audit.cpp",
 	MAME_DIR .. "src/frontend/mame/audit.h",
@@ -182,8 +197,8 @@ files {
 	MAME_DIR .. "src/frontend/mame/ui/widgets.cpp",
 	MAME_DIR .. "src/frontend/mame/ui/widgets.h",
 }
-
 pchsource(MAME_DIR .. "src/frontend/mame/audit.cpp")
+end
 
 dependency {
 	{ MAME_DIR .. "src/frontend/mame/ui/about.cpp", GEN_DIR .. "emu/copying.ipp" },

@@ -24,7 +24,16 @@ else
 	project (_subtarget)
 end
 	uuid (os.uuid(_target .."_" .. _subtarget))
-	kind "ConsoleApp"
+
+	if string.find(_OPTIONS["osd"], "headless") then
+		if (_OPTIONS["SHLIB"] == "0") then
+			kind "StaticLib"
+		else
+			kind "SharedLib"
+		end
+	else
+		kind "ConsoleApp"
+	end
 
 	configuration { "android*" }
 		targetprefix "lib"
